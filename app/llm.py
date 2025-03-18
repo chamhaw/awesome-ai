@@ -23,7 +23,10 @@ def call(system_prompt: str, user_input: str, knowledge: str) -> Union[str, List
         result_format='text'
     )
     if response.status_code != 200 or response.code != "":
-        pass
+        print(response.status_code)
+        print(response.code)
+        print(response.message)
+        return ""
 
     if response.output.choices:
         return response.output.choices[0].message.content
