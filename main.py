@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # response: Union[str, List] = llm.call('你是关系型数据库 BI',' 根据数据库建表语句，生成数据库模型和领域模型图' + ddl.ddl_prompt, knowledge)
     # print(response)
-    response: Union[str, List] = llm.call('你是关系型数据库 BI',' 根据数据库建表语句，生成 MySQL 8.0 直接运行的查询语句，sql语句中避免包含不明确的条件以及空 where 的情况' + ddl.ddl_prompt, knowledge)
+    response: Union[str, List] = llm.call('你是关系型数据库 BI',' 根据数据库建表语句，生成 MySQL 8.0 直接运行的查询语句, 列名展示为用户可理解的概念，sql语句中避免包含不明确的条件以及空 where 的情况' + ddl.ddl_prompt, knowledge)
     print(response)
     # 将文本写入 md 文件
     # 将 response 写入文件
