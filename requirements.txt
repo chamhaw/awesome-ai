@@ -1,0 +1,6 @@
+
+dashscope~=1.22.2
+python-dotenv~=1.0.1
+llama-index-core~=0.12.24.post1
+llama-index-indices-managed-dashscope
+llama-index-llms-dashscope
