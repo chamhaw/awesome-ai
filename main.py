@@ -31,11 +31,18 @@ if __name__ == "__main__":
     with open("output/response.md", "w", encoding="utf-8") as f:
         f.write(response)
 
+    # db_config = {
+    #     'user': 'mayfair',
+    #     'password': 'Mayfair@www4@',
+    #     'host': 'shared-sg-testing.cluster-cdaqf1f1hpeh.ap-southeast-1.rds.amazonaws.com',
+    #     'database': 'test_ai'
+    # }
+
     db_config = {
-        'user': 'mayfair',
-        'password': 'Mayfair@www4@',
-        'host': 'shared-sg-testing.cluster-cdaqf1f1hpeh.ap-southeast-1.rds.amazonaws.com',
-        'database': 'test_ai'
+        'user': 'user_only_maintenance-road',
+        'password': 'wanjuan123456',
+        'host': '121.41.51.191',
+        'database': 'maintenance-road'
     }
 
     conn = mysql.connector.connect(**db_config)
