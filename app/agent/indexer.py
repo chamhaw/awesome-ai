@@ -8,6 +8,11 @@ from llama_index.indices.managed.dashscope import DashScopeCloudIndex
 from llama_index.indices.managed.dashscope.retriever import DashScopeCloudRetriever
 from llama_index.llms.dashscope import DashScope, DashScopeGenerationModels
 
+model_name = DashScopeGenerationModels.QWEN_MAX
+
+dashscope_llm = DashScope(
+        model_name=model_name, api_key=os.environ["DASHSCOPE_API_KEY"]
+)
 # create a new index
 def initialize_index(index_name:str, documents: List[Document]) -> DashScopeCloudIndex:
     index = DashScopeCloudIndex.from_documents(

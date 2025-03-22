@@ -9,7 +9,7 @@ def extract_sql_from_markdown(markdown_text):
     sql_statements = [block.strip() for block in code_blocks]
     return sql_statements
 
-def execute_sql_and_save_to_csv(sql, conn, output_csv_path):
+def execute_mysql_and_save_to_csv(sql, conn, output_csv_path):
     # 创建数据库连接
     cursor = conn.cursor()
 
@@ -25,3 +25,4 @@ def execute_sql_and_save_to_csv(sql, conn, output_csv_path):
 
     # 将 DataFrame 保存为 CSV 文件
     df.to_csv(output_csv_path, index=False, mode='a', header=not pd.io.common.file_exists(output_csv_path))
+    return df.to_csv(None, index=False)

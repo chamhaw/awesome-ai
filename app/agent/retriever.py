@@ -1,9 +1,10 @@
+import os
 from typing import List
 
 from llama_index.core.base.base_retriever import BaseRetriever
 from llama_index.core.schema import NodeWithScore
 from llama_index.indices.managed.dashscope import DashScopeCloudIndex
-
+from llama_index.llms.dashscope import DashScope, DashScopeGenerationModels
 
 def get_retriever(index_name: str) -> BaseRetriever:
     index = DashScopeCloudIndex(index_name)
