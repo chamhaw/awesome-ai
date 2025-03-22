@@ -1,6 +1,7 @@
 import re
 
 import pandas as pd
+from mysql.connector import InterfaceError
 
 
 def extract_sql_from_markdown(markdown_text):
@@ -15,7 +16,10 @@ def execute_mysql_and_save_to_csv(sql, conn, output_csv_path):
 
     # 执行 SQL 语句并获取结果
     cursor.execute(sql)
-    result = cursor.fetchall()
+    try:
+        result = cursor.fetchall()
+    except InterfaceError as e:
+        return ''
 
     # 获取列名
     column_names = [description[0] for description in cursor.description]

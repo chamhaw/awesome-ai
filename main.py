@@ -57,7 +57,10 @@ def generate_sql():
         response_body['message'] = response
     else:
         results = execute_sql_to_csv(request.json.get('sql'), csv_path, db_config)
+        if not results:
+            response_body['message'] = "未查到任何统计数据，请重新调整查询条件"
         response_body['csv'] = results
+        response_body['file_path'] = csv_path
     resp = make_response(response_body)
     resp.set_cookie('x-session-id', session_id,
                     httponly=True,
