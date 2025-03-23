@@ -1,3 +1,4 @@
+import os
 import re
 
 import pandas as pd
@@ -30,5 +31,6 @@ def execute_mysql_and_save_to_csv(sql, conn, output_csv_path):
     df = pd.DataFrame(result, columns=column_names)
 
     # 将 DataFrame 保存为 CSV 文件
+    os.makedirs(os.path.dirname(output_csv_path), exist_ok=True)
     df.to_csv(output_csv_path, index=False, mode='a', header=not pd.io.common.file_exists(output_csv_path))
     return df.to_csv(None, index=False)

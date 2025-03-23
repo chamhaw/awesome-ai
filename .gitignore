@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# 自定义的临时状态存储，不提交到git，这部分内容可以放在数据库中，实现应用的无状态部署
+storage
