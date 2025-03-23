@@ -1,0 +1,24 @@
+tags:
+  - 调试
+summary: 下载生成的CSV文件
+parameters:
+  - in: query
+    name: file_path
+    type: string
+    required: false
+    description: 需要下载的文件路径（默认使用会话关联路径）
+responses:
+  200:
+    description: CSV文件下载
+    content:
+      text/csv:
+        schema:
+          type: string
+  404:
+    description: 文件未找到
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "File not found"

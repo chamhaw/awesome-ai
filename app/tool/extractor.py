@@ -21,6 +21,8 @@ def execute_mysql_and_save_to_csv(sql, conn, output_csv_path):
     except InterfaceError as e:
         return ''
 
+    if not result:
+        return ''
     # 获取列名
     column_names = [description[0] for description in cursor.description]
 

@@ -1,0 +1,45 @@
+tags:
+  - Chat
+summary: 根据用户提示生成SQL并执行
+consumes:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        user_prompt:
+          type: string
+          description: 用户输入的自然语言查询
+          required: true
+        system_prompt:
+          type: string
+          description: 自定义系统提示信息（可选）
+        history:
+          type: array
+          items:
+            type: object
+          description: 会话历史记录（可选）
+        csv_path:
+          type: string
+          description: 自定义CSV输出路径（可选）
+responses:
+  200:
+    description: SQL生成及执行结果
+    schema:
+      type: object
+      properties:
+        sql:
+          type: string
+          description: 生成的SQL语句（当成功解析时存在）
+        message:
+          type: string
+          description: 系统提示信息（需要用户补充信息时存在）
+        csv:
+          type: string
+          description: 执行结果数据（当SQL有效时存在）
+        file_path:
+          type: string
+          description: CSV文件存储路径（当结果存在时返回）

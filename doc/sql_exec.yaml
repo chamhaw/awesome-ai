@@ -1,0 +1,28 @@
+tags:
+  - 调试
+summary: 执行指定SQL查询并返回结果
+consumes:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        sql:
+          type: string
+          description: 需要执行的SQL语句
+          required: true
+        file_path:
+          type: string
+          description: 自定义CSV输出路径（可选）
+responses:
+  200:
+    description: 查询结果数据
+    schema:
+      type: object
+      properties:
+        csv:
+          type: string
+          description: 查询结果数据集（空字符串表示无结果）
