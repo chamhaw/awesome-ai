@@ -33,7 +33,7 @@ SERVER_URL # 非必须，默认是 http://localhost:5050
     DB_NAME=<your-db-name>
     DB_USER=<your-db-user>
     DB_PASSWORD=<your-db-password>
-    SERVER_URL=http://localhost:5050 # 非必须
+    SERVER_URL=http://localhost:5050 # 非必须, 默认是 http://localhost:5050, 用于后端拼接 csv 下载链接
     ```
 2. 启动应用
    在项目根目录下运行 `python main.py`
