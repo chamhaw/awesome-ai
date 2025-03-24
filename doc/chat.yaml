@@ -39,7 +39,10 @@ responses:
           description: 系统提示信息（需要用户补充信息时存在）
         csv:
           type: string
-          description: 执行结果数据（当SQL有效时存在）
+          description: 执行结果数据（当 SQL 执行有返回结果时存在）
         file_path:
           type: string
-          description: CSV文件存储路径（当结果存在时返回）
+          description: CSV文件存储路径（当 SQL 执行有返回结果时存在）
+        file_link:
+          type: string
+          description: CSV文件下载链接（当 SQL 执行有返回结果时存在）

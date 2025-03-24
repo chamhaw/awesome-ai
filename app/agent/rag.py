@@ -5,9 +5,9 @@ from llama_index.core.schema import NodeWithScore
 
 from app.agent.indexer import retrieve
 
-index_name = "test_index"
+DASHSCOPE_LLAMA_INDEX_NAME = "test_index"
 def retrieve_knowledge_from_rag(user_prompt: str):
-    data: List[NodeWithScore] = retrieve(index_name, user_prompt)
+    data: List[NodeWithScore] = retrieve(DASHSCOPE_LLAMA_INDEX_NAME, user_prompt)
     knowledge = ""
     for d in data:
         knowledge += d.get_text()

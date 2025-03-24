@@ -1,5 +1,6 @@
 import os
-import uuid
+import time
+from urllib.parse import quote
 
 from dashscope.api_entities.dashscope_response import Message
 from flask import Flask, request, jsonify, make_response, send_file
@@ -31,10 +32,9 @@ DB_CONFIG = {
     'host': os.getenv('DB_HOST'),
     'database': os.getenv('DB_NAME')
 }
-LLAMA_INDEX = {
-    'name': os.getenv('DASHSCOPE_LLAMA_INDEX_NAME')
-}
 
+SERVER_URL = os.getenv('SERVER_URL') or 'http://localhost:5050'
+DOWNLOAD_API = "/api/download_file"
 
 # 新增生成SQL的API端点
 @flask_app.route('/api/chat', methods=['POST'])
@@ -42,7 +42,7 @@ LLAMA_INDEX = {
 def generate_sql():
     """生成SQL语句
     """
-    session_id = request.cookies.get('x-session-id') or uuid.uuid4().hex
+    session_id = request.cookies.get('x-session-id') or time.strftime("%Y%m%d%H%M%S", time.localtime())
     raw_user_prompt = request.json.get('user_prompt')
     csv_path = request.json.get('csv_path') or store.get_csv_path(session_id)
     history = request.json.get('history') or []
@@ -50,20 +50,24 @@ def generate_sql():
         raw_user_prompt, request.json.get('system_prompt'),
         session_id,
         history)
-    response = llm.deepseek_r1_call(system_prompt, user_prompt, history)
-    sql = extractor.extract_sql_from_markdown(response)
+    response = llm.qwen_qwq_call(system_prompt, user_prompt, history)
+    sqls = extractor.extract_sql_queries(response)
     response_body = {}
-    if sql:
-        response_body['sql'] = sql[0]
-    if "需要您补充以下信息" in response:
+    if not sqls or "需要您补充以下信息" in response:
         response_body['message'] = response
     else:
-        results = execute_sql_to_csv(request.json.get('sql'), csv_path, DB_CONFIG)
+        if len(sqls) > 1:
+            print("有多个SQL语句, 可能需要调整 prompt")
+            for i in range(len(sqls)):
+                print(f'sql: {i + 1}-{sqls[i]}\n')
+        response_body['sql'] = sqls[0]
+        results = execute_sql_to_csv(response_body['sql'], csv_path, DB_CONFIG)
         if not results:
             response_body['message'] = "未查到任何统计数据，请重新调整查询条件"
         else:
             response_body['csv'] = results
             response_body['file_path'] = csv_path
+            response_body['file_link'] = f"{SERVER_URL}/{DOWNLOAD_API}?file_path={quote(csv_path)}"
 
     history.append(Message(role='user', content=raw_user_prompt))
     history.append(Message(role='assistant', content=response))
@@ -85,8 +89,8 @@ def generate_sql():
 def execute_sql():
     """执行SQL查询
     """
-    session_id = request.cookies.get('x-session-id') or uuid.uuid4().hex
-    sql = request.json.get('sql')
+    session_id = request.cookies.get('x-session-id') or time.strftime("%Y%m%d%H%M%S", time.localtime())
+    sql = request.json.get('sql') or 'select 1'
     file_path = request.json.get('file_path') or store.get_csv_path(session_id)
     results = execute_sql_to_csv(sql, file_path, DB_CONFIG)
     return jsonify({"csv": results})
@@ -94,12 +98,12 @@ def execute_sql():
 
 
 # 新增下载CSV文件的API端点
-@flask_app.route('/api/download_file', methods=['GET'])
+@flask_app.route(DOWNLOAD_API, methods=['GET'])
 @swag_from('doc/csv_download.yaml')
 def download_csv():
     """下载CSV文件
     """
-    session_id = request.cookies.get('x-session-id') or uuid.uuid4().hex
+    session_id = request.cookies.get('x-session-id') or time.strftime("%Y%m%d%H%M%S", time.localtime())
     file_path = request.args.get('file_path') or store.get_csv_path(session_id)
     if not os.path.exists(file_path):
         return jsonify({"error": "File not found"}), 404
