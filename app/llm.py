@@ -10,17 +10,20 @@ from openai import OpenAI
 model_name = DashScopeGenerationModels.QWEN_MAX
 
 class OpenAIInvoker:
-    def __init__(self, api_key: str = os.getenv("OPENAI_API_KEY"), base_url: str = "https://api.openai.com/v1"):
+    def __init__(self, api_key: str = os.getenv("OPENAI_API_KEY") or "", base_url: str = "https://api.openai.com/v1"):
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         
-    def call(self, model: str, system_prompt: str, user_input: str, 
-             history: List[Message] = None, stream: bool = False) -> str:
+    def call(self, model: str, system_prompt: str, user_input: str,
+             history=None, stream: bool = False) -> str:
+        if history is None:
+            history = []
         start_time = time.time()
         
         if history is None:
             history = []
-            
-        messages = [Message("system", system_prompt)]
+        messages = []
+        if system_prompt:
+            messages = [Message("system", system_prompt)]
         for msg in history:
             messages.append(Message(msg.role, msg.content))
         messages.append(Message("user", user_input))
@@ -29,14 +32,14 @@ class OpenAIInvoker:
         
         try:
             response = self.client.chat.completions.create(
-                model=model,
                 messages=messages,
+                model=model,
                 stream=stream
             )
             
             if stream:
                 reply = ""
-                print("思考中:\n")
+                # print("思考中:\n")
                 try:
                     for chunk in response:
                         if not chunk.choices or len(chunk.choices) == 0:
@@ -64,9 +67,9 @@ class OpenAIInvoker:
             print(f"API调用错误: {str(e)}")
             return ""
 
-def qwen_qwq_call(system_prompt: str, user_input: str, history: List[Message] = None) -> str:
+def qwen_qwq_call(system_prompt: str, user_input: str, history: List[Message] = []) -> str:
     invoker = OpenAIInvoker(
-        api_key=os.getenv("DASHSCOPE_API_KEY"),
+        api_key=os.getenv("DASHSCOPE_API_KEY") or "",
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
     )
     return invoker.call(
@@ -77,9 +80,9 @@ def qwen_qwq_call(system_prompt: str, user_input: str, history: List[Message] = 
         stream=True,
     )
 
-def deepseek_r1_call(system_prompt: str, user_input: str, history: List[Message] = None) -> str:
+def deepseek_r1_call(system_prompt: str, user_input: str, history: List[Message] = []) -> str:
     invoker = OpenAIInvoker(
-        api_key=os.getenv("DEEPSEEK_API_KEY"),
+        api_key=os.getenv("DEEPSEEK_API_KEY") or "",
         base_url="https://api.deepseek.com",
     )
     return invoker.call(
