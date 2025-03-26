@@ -1,30 +1,31 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
-  "name": "Python 3.12 Container",
-  "image": "python:3.12-slim",
-  "runArgs": [
-    "--cap-add=SYS_PTRACE",  // 支持调试
-    "--security-opt", "seccomp=unconfined"
-  ],
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/zsh",
-    "python.defaultInterpreterPath": "/home/devuser/.local/bin/python",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.formatting.provider": "black"
+  "name": "Awesome AI",
+  "image": "python:3.12-bullseye",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/zsh",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black"
+      },
+      "extensions": [
+        "ms-python.python",          // Python 基础扩展
+        "ms-python.vscode-pylance",  // 类型检查
+        "charliermarsh.ruff",        // 高性能 Linter
+        "formulahendry.code-runner" // 代码运行器
+      ]
+    }
   },
-  "extensions": [
-    "ms-python.python",          // Python 基础扩展
-    "ms-python.vscode-pylance",  // 类型检查
-    "charliermarsh.ruff",        // 高性能 Linter
-    "formulahendry.code-runner" // 代码运行器
-  ],
   "forwardPorts": [
     5050  // 按需添加应用端口（如 Flask/Gunicorn）
   ],
   "postCreateCommand": "pip install --user -r requirements.txt",
+  "postStartCommand": "echo 'Hello, AI!'",
   "remoteUser": "devuser",
+  "updateRemoteUserUID": true,
    "mounts": [
 		"source=${localEnv:HOME}/.gitignore,target=/home/devuser/.gitignore,type=bind,consistency=cached",
 		"source=${localEnv:HOME}/.netrc,target=/home/devuser/.netrc,type=bind,consistency=cached",
@@ -36,10 +37,11 @@
 			"installOhMyZsh": true,
 			"installOhMyZshConfig": true,
 			"upgradePackages": true,
-			"installNode": true,
-			"username": "devuser",
-			"userUid": "automatic",
-			"userGid": "1001"
+			// "installNode": true,
+			// "username": "devuser",
+			// "userUid": "1000",
+			// "userGid": "1000"
 		}
-	}
+	},
+  "containerEnv": {},
 }
