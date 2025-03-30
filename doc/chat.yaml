@@ -25,6 +25,15 @@ parameters:
         csv_path:
           type: string
           description: 自定义CSV输出路径（可选）
+        provider:
+          type: string
+          description: 自定义大模型提供者（可选）
+        model:
+          type: string
+          description: 自定义模型类型（可选）
+        clear:
+          type: boolean
+          description: 是否清除会话历史记录（可选）
 responses:
   200:
     description: SQL生成及执行结果
@@ -36,7 +45,7 @@ responses:
           description: 生成的SQL语句（当成功解析时存在）
         message:
           type: string
-          description: 系统提示信息（需要用户补充信息时存在）
+          description: 系统提示信息（只有需要用户补充信息时存在）
         csv:
           type: string
           description: 执行结果数据（当 SQL 执行有返回结果时存在）
@@ -46,3 +55,6 @@ responses:
         file_link:
           type: string
           description: CSV文件下载链接（当 SQL 执行有返回结果时存在）
+        chart_type:
+          type: string
+          description: 图表类型（当 SQL 执行有返回结果时存在, 枚举值）
