@@ -19,7 +19,7 @@ DB_PASSWORD
 SERVER_URL # 非必须，默认是 http://localhost:5050
 ```
 运行容器
-`docker run -d --name awesome-ai -p 5000:5000 -e DEEPSEEK_API_KEY=<your-deepseek-api-key> -e DB_HOST=<your-db-host> -e DB_NAME=<your-db-name> -e DB_USER=<your-db-user> -e DB_PASSWORD=<your-db-password> awesome-ai:latest`
+`docker run -d --name awesome-ai -p 5050:5050 -e DEEPSEEK_API_KEY=<your-deepseek-api-key> -e DB_HOST=<your-db-host> -e DB_NAME=<your-db-name> -e DB_USER=<your-db-user> -e DB_PASSWORD=<your-db-password> awesome-ai:latest`
 ## 本地开发
 ### 设置环境变量
 如果清楚如何在运行时环境变量中设置容器运行的关键环境变量，可以跳过此步骤。
