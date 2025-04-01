@@ -67,7 +67,7 @@ def generate_sql():
     if not sql or "<hint>" in response:
         # 提取 <hint> 中的提示信息
         soup = BeautifulSoup(response, 'html.parser')
-        response_body['message'] = soup.find('hint')
+        response_body['message'] = soup.find('hint').get_text(strip=False)
     else:
         response_body['sql'] = sql
         if not sql_result:
