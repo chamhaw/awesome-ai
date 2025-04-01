@@ -64,10 +64,10 @@ def generate_sql():
     response, sql, sql_result, chart_type = chat.process_sql_query(raw_user_prompt)
     response_body = {}
     
-    if not sql and "<hint>" in response:
-        # 提取 <hint> 和 </hint> 之间的内容
+    if not sql or "<hint>" in response:
+        # 提取 <hint> 中的提示信息
         match = re.search(r'<hint>(.*?)</hint>', response)
-        response_body['message'] = match.group(1) if match else response
+        response_body['message'] = match.group(1) if match else response.replace('<hint>', '').replace('</hint>', '')
     else:
         response_body['sql'] = sql
         if not sql_result:
