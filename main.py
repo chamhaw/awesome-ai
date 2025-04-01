@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from urllib.parse import quote
 
@@ -62,8 +63,11 @@ def generate_sql():
         chat.set_system_prompt(system_prompt)
     response, sql, sql_result, chart_type = chat.process_sql_query(raw_user_prompt)
     response_body = {}
-    if not sql or "需要您补充以下信息" in response:
-        response_body['message'] = response
+    
+    if not sql and "<hint>" in response:
+        # 提取 <hint> 和 </hint> 之间的内容
+        match = re.search(r'<hint>(.*?)</hint>', response)
+        response_body['message'] = match.group(1) if match else response
     else:
         response_body['sql'] = sql
         if not sql_result:
