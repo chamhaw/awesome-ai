@@ -10,7 +10,7 @@ from flasgger import Swagger, swag_from
 from app.agent import store
 from app.cli import CLIChat
 from app.tool.sql import execute_sql_to_csv
-
+from bs4 import BeautifulSoup
 flask_app = Flask(__name__)
 
 swagger = Swagger(flask_app)  # 初始化 Swagger
@@ -66,8 +66,8 @@ def generate_sql():
     
     if not sql or "<hint>" in response:
         # 提取 <hint> 中的提示信息
-        match = re.search(r'<hint>(.*?)</hint>', response)
-        response_body['message'] = match.group(1) if match else response.replace('<hint>', '').replace('</hint>', '')
+        soup = BeautifulSoup(response, 'html.parser')
+        response_body['message'] = soup.find('hint')
     else:
         response_body['sql'] = sql
         if not sql_result:

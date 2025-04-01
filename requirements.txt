@@ -11,3 +11,4 @@ openai~=1.66.3
 Flask~=3.1.0
 flasgger~=0.9.7.1
 sqlparse~=0.5.3
+beautifulsoup4~=4.13.3

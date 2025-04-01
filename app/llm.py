@@ -34,7 +34,9 @@ class OpenAIInvoker:
             response = self.client.chat.completions.create(
                 messages=messages,
                 model=model,
-                stream=stream
+                stream=stream,
+                seed=42,
+                temperature=0.0,
             )
             
             if stream:
