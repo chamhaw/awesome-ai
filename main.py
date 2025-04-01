@@ -64,7 +64,7 @@ def generate_sql():
     response, sql, sql_result, chart_type = chat.process_sql_query(raw_user_prompt)
     response_body = {}
     
-    if not sql or "<hint>" in response:
+    if not sql and "<hint>" in response:
         # 提取 <hint> 中的提示信息
         soup = BeautifulSoup(response, 'html.parser')
         response_body['message'] = soup.find('hint').get_text(strip=False)
