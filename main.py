@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify, make_response, send_file
 from dotenv import load_dotenv
 from flasgger import Swagger, swag_from
 
+from app.prompt import system_prompts
 from app.agent import store
 from app.cli import CLIChat
 from app.tool.sql import execute_sql_to_csv
@@ -57,12 +58,29 @@ def generate_sql():
     history = request.json.get('history')
     if history:
         chat.history = history
-
+    system_prompt, history = store.prompt_prepare(raw_user_prompt, system_prompts.intention, chat.session_id, history)
+    response = chat.invoker.call(
+        model=chat.current_model,
+        system_prompt=system_prompt,
+        user_input=raw_user_prompt,
+        history=history,
+        stream=False
+    )
+    response_body = {}
+    if not "<analysis>需要SQL</analysis>" in response:
+        response_body['message'] = response
+        resp = make_response(response_body)
+        resp.set_cookie('x-session-id', chat.session_id,
+                        httponly=True,
+                        secure=True,
+                        max_age=1800)
+        return resp
     system_prompt = request.json.get('system_prompt')
     if system_prompt:
         chat.set_system_prompt(system_prompt)
+
     response, sql, sql_result, chart_type = chat.process_sql_query(raw_user_prompt)
-    response_body = {}
+
     
     if not sql and "<hint>" in response:
         # 提取 <hint> 中的提示信息

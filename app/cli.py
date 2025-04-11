@@ -5,6 +5,7 @@ from dashscope.api_entities.dashscope_response import Message
 
 from app import const
 from app.llm import OpenAIInvoker
+from app.prompt import system_prompts
 from app.tool.sql import execute_sql_to_csv
 from app.tool import extractor
 from app.agent import store
@@ -62,13 +63,17 @@ class CLIChat:
         if time.time() - session_time > 1800:  # 30分钟 = 1800秒
             self.session_id = time.strftime("%Y%m%d%H%M%S", time.localtime())
             self.csv_path = store.get_csv_path(self.session_id)
-        system_prompt, user_prompt, history = store.prompt_prepare(
+        system_prompt, history = store.prompt_prepare(
             user_input, self.system_prompt, self.session_id, self.history)
-        
+
+        if not history:
+            user_input += f"""请结合领域知识和背景，生成 MySQL 8.0 直接运行的查询语句，并根据情况推荐适合的统计图表编号.\n
+            数据库建表语句如下:\n {system_prompts.ddl_sql}\n
+            """
         response = self.invoker.call(
             model=self.current_model,
             system_prompt=system_prompt,
-            user_input=user_prompt,
+            user_input=user_input,
             history=history,
             stream=True
         )

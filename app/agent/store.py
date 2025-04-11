@@ -33,10 +33,7 @@ def prompt_prepare(raw_user_prompt: str, system_prompt: str, session_id: str, hi
         knowledge = knowledge[-100000:]
     if not system_prompt:
         system_prompt = system_prompts.gen_sql.format(knowledge=knowledge)
-    user_prompt = raw_user_prompt
-    if not history:
-        user_prompt = '请结合领域知识和背景，生成 MySQL 8.0 直接运行的查询语句，并根据情况推荐适合的统计图表编号.\n' + raw_user_prompt
-    return system_prompt, user_prompt, history
+    return system_prompt, history
 
 def store_context(session_id: str, history: List[Message]):
     # 将 response 写入文件
