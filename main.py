@@ -46,8 +46,8 @@ def generate_sql():
     """生成SQL语句
     """
     raw_user_prompt = request.json.get('user_prompt')
-    provider = request.json.get('provider') or '4'
-    model = request.json.get('model') or 'deepseek-reasoner'
+    provider = request.json.get('provider') or '2'
+    model = request.json.get('model') or 'deepseek-r1'
     clear = request.json.get('clear') or False
     if clear or not request.cookies.get('x-session-id'):
         chat.reset()
