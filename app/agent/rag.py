@@ -1,18 +1,18 @@
 import os
 from typing import List
 
-from llama_index.core.schema import NodeWithScore
-
-from app.agent.indexer import retrieve
-
-DASHSCOPE_LLAMA_INDEX_NAME = "test_index"
-def retrieve_knowledge_from_rag(user_prompt: str):
-    data: List[NodeWithScore] = retrieve(DASHSCOPE_LLAMA_INDEX_NAME, user_prompt)
-    knowledge = ""
-    for d in data:
-        knowledge += d.get_text()
-
-    return knowledge
+# from llama_index.core.schema import NodeWithScore
+#
+# from app.agent.indexer import retrieve
+#
+# DASHSCOPE_LLAMA_INDEX_NAME = "test_index"
+# def retrieve_knowledge_from_rag(user_prompt: str):
+#     data: List[NodeWithScore] = retrieve(DASHSCOPE_LLAMA_INDEX_NAME, user_prompt)
+#     knowledge = ""
+#     for d in data:
+#         knowledge += d.get_text()
+#
+#     return knowledge
 
 
 def retrieve_knowledge_from_local(dir_path: str):

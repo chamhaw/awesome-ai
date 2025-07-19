@@ -4,10 +4,8 @@ from typing import List
 import time
 
 from dashscope.api_entities.dashscope_response import Message
-from llama_index.llms.dashscope import DashScopeGenerationModels
 from openai import OpenAI
 
-model_name = DashScopeGenerationModels.QWEN_MAX
 
 class OpenAIInvoker:
     def __init__(self, api_key: str = os.getenv("OPENAI_API_KEY") or "", base_url: str = "https://api.openai.com/v1"):

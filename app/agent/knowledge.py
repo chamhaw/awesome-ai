@@ -1,4 +1,4 @@
-from app.agent.rag import retrieve_knowledge_from_rag, retrieve_knowledge_from_local
+from app.agent.rag import retrieve_knowledge_from_local
 
 
 def get_knowledge(user_prompt: str):

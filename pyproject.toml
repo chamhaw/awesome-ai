@@ -1,0 +1,57 @@
+[project]
+name = "awesome-ai"
+version = "0.1.0"
+description = "AI 生成 SQL 并执行输出 CSV 文件 - 使用 DeepSeek R1 和 DashScope 的智能 SQL 查询生成系统"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    {name = "Apache", email = "apache@example.com"}
+]
+keywords = ["ai", "sql", "llm", "dashscope", "deepseek"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    # 核心依赖
+    "flask>=3.0.0",
+    "flasgger>=0.9.7",
+    "python-dotenv>=1.0.0",
+    "toml>=0.10.2",
+    # 数据库相关
+    "mysql-connector-python>=9.0.0",
+    "sqlalchemy>=2.0.0",
+    "sqlparse>=0.4.0",
+    "pandas>=2.0.0",
+    # LLM相关
+    "google-adk==1.1.1",
+    "litellm>=1.65.0",
+    "openai>=1.0.0",
+    "dashscope>=1.20.0",
+    # 工具依赖
+    "beautifulsoup4>=4.0.0",
+    "pydantic>=2.10.6",
+]
+
+[project.scripts]
+awesome-ai = "main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+include = [
+    "main.py",
+    "cli.py",
+    "app/",
+    "config/",
+    "knowledge/",
+]
+
+[tool.uv]
+dev-dependencies = []
