@@ -179,6 +179,5 @@ storage
 
 config.yaml
 
-mailmap
-
 **/secret.toml
+mailmap
