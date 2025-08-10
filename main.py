@@ -311,11 +311,17 @@ def download_csv():
     """下载CSV文件
     """
     session_id = request.cookies.get('x-session-id') or time.strftime("%Y%m%d%H%M%S", time.localtime())
-    file_path = request.args.get('file_path') or store.get_csv_path(session_id)
-    if not os.path.exists(file_path):
+    requested_path = request.args.get('file_path')
+    storage_root = os.path.abspath(os.path.join(os.getcwd(), 'storage'))
+    session_dir = os.path.abspath(os.path.join(storage_root, session_id))
+    candidate_path = os.path.abspath(requested_path) if requested_path else os.path.abspath(store.get_csv_path(session_id))
+    # 仅允许下载当前会话目录下的文件，防止路径穿越
+    if not candidate_path.startswith(session_dir + os.sep):
+        return jsonify({"error": "Access denied"}), 403
+    if not os.path.exists(candidate_path):
         return jsonify({"error": "File not found"}), 404
-    file_name = os.path.basename(file_path)
-    return send_file(file_path, as_attachment=True, download_name=file_name)
+    file_name = os.path.basename(candidate_path)
+    return send_file(candidate_path, as_attachment=True, download_name=file_name)
 
 
 # 健康检查端点
@@ -361,7 +367,7 @@ def health_check():
 
 
 # 启动Flask应用
-if __name__ == "__main__":
+def main():
     print("🚀 启动 Awesome AI 服务...")
     print(f"📊 Database: {DB_CONFIG.get('host', 'not configured')}")
     print(f"🤖 ADK BI Agent: {'✅ Ready' if adk_bi_agent else '❌ Failed'}")
@@ -382,3 +388,7 @@ if __name__ == "__main__":
         use_reloader=debug_mode,  # 启用文件变化监控
         threaded=True  # 启用多线程支持
     )
+
+
+if __name__ == "__main__":
+    main()

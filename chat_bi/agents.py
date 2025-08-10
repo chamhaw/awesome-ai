@@ -11,7 +11,7 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
-from app.prompt import system_prompts
+from app.prompt.manager import prompt_manager
 from .tools import SQLExecutor, ChartRecommender, DataValidator, QueryExtractor
 from .config import app_config
 from chat_bi import store
@@ -84,8 +84,8 @@ class BIAgent:
 {knowledge}
 </context>
 
-数据库结构信息：
-{system_prompts.ddl_sql}
+ 数据库结构信息：
+ {prompt_manager.load("ddl_sql")}
 
 工作流程：
 1. 首先分析用户查询，如果需要数据查询，在回复中包含 <analysis>需要SQL</analysis>
@@ -502,7 +502,7 @@ class SQLAgent:
             knowledge = knowledge[-100000:]
         
         try:
-            return system_prompts.gen_sql.format(knowledge=knowledge)
+            return prompt_manager.render("gen_sql", knowledge=knowledge)
         except Exception as e:
             print(f"⚠️ 格式化SQL指令时出错: {e}")
             # 如果格式化失败，使用备用指令
@@ -519,7 +519,7 @@ class SQLAgent:
 </context>
 
 数据库结构：
-{system_prompts.ddl_sql}
+{prompt_manager.load("ddl_sql")}
 
 规则：
 - 只生成SELECT查询语句
@@ -572,7 +572,7 @@ class SQLAgent:
 # 用户查询: {query}
 #
 # 数据库结构：
-# {system_prompts.ddl_sql}
+# {prompt_manager.load("ddl_sql")}
 #
 # 要求：
 # 1. 只生成SELECT查询语句

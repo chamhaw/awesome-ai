@@ -5,8 +5,7 @@ from typing import List
 from dashscope.api_entities.dashscope_response import Message
 
 from app.agent.knowledge import get_knowledge
-
-from app.prompt import system_prompts
+from app.prompt.manager import prompt_manager
 
 STORAGE_DIR = 'storage'
 
@@ -32,7 +31,14 @@ def prompt_prepare(raw_user_prompt: str, system_prompt: str, session_id: str, hi
     if len(knowledge) > 100000:
         knowledge = knowledge[-100000:]
     if not system_prompt:
-        system_prompt = system_prompts.gen_sql.format(knowledge=knowledge)
+        system_prompt = prompt_manager.render("gen_sql", knowledge=knowledge)
+    else:
+        # 如果外部传入了模板字符串且包含 {knowledge}，严格渲染
+        if '{knowledge}' in system_prompt:
+            try:
+                system_prompt = system_prompt.format(knowledge=knowledge)
+            except KeyError as e:
+                raise ValueError(f"Missing template variable: {e}")
     return system_prompt, history
 
 def store_context(session_id: str, history: List[Message]):

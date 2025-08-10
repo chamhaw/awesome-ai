@@ -5,7 +5,7 @@ from typing import List
 from dashscope.api_entities.dashscope_response import Message
 
 from chat_bi.knowledge import get_knowledge
-from chat_bi.prompt import system_prompts
+from app.prompt.manager import prompt_manager
 
 STORAGE_DIR = 'storage'
 
@@ -37,19 +37,15 @@ def prompt_prepare(raw_user_prompt: str, system_prompt: str, session_id: str, hi
     if len(knowledge) > 100000:
         knowledge = knowledge[-100000:]
     
-    # 如果system_prompt为空，使用默认的gen_sql模板
+    # 如果 system_prompt 为空，使用管理器渲染模板
     if not system_prompt:
-        system_prompt = system_prompts.gen_sql
-    
-    # 确保对system_prompt进行knowledge格式化
-    # 检查是否包含{knowledge}占位符，如果包含则进行格式化
-    if '{knowledge}' in system_prompt:
-        try:
-            system_prompt = system_prompt.format(knowledge=knowledge)
-        except Exception as e:
-            print(f"⚠️ 格式化system_prompt时出错: {e}")
-            # 如果格式化失败，至少确保有一个可用的system_prompt
-            system_prompt = system_prompts.gen_sql.format(knowledge=knowledge)
+        system_prompt = prompt_manager.render("gen_sql", knowledge=knowledge)
+    else:
+        if '{knowledge}' in system_prompt:
+            try:
+                system_prompt = system_prompt.format(knowledge=knowledge)
+            except KeyError as e:
+                raise ValueError(f"Missing template variable: {e}")
     
     return system_prompt, history
 

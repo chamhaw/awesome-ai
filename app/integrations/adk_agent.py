@@ -12,6 +12,7 @@ from google.adk.models.lite_llm import LiteLlm
 from app.tool.sql import execute_sql_to_csv
 from app.tool import extractor
 from app.agent import store
+from app.prompt.manager import prompt_manager
 from app.prompt import system_prompts
 
 
@@ -133,32 +134,27 @@ class BIChatAgent:
         
     def _build_system_instruction(self) -> str:
         """构建系统指令"""
-        base_instruction = f"""
-你是一个专业的BI数据分析助手。你的主要任务是：
-
-1. 理解用户的自然语言查询需求
-2. 分析查询意图，判断是否需要执行SQL查询
-3. 如果需要SQL查询，生成准确的MySQL 8.0查询语句
-4. 推荐合适的数据可视化图表类型
-5. 提供清晰、有洞察力的数据分析结果
-
-数据库结构信息：
-{system_prompts.ddl_sql}
-
-工作流程：
-1. 首先分析用户查询，如果需要数据查询，在回复中包含 <analysis>需要SQL</analysis>
-2. 生成SQL语句并使用sql_executor工具执行
-3. 使用chart_recommender工具推荐合适的图表类型
-4. 分析查询结果并提供有价值的洞察
-
-注意事项：
-- 生成的SQL必须符合MySQL 8.0语法
-- 只查询确实存在的表和字段
-- 考虑数据的业务含义，提供有价值的分析
-- 推荐最适合数据展示的图表类型
-        """
-        
-        return base_instruction.strip()
+        ddl_sql = system_prompts.ddl_sql
+        base_instruction = (
+            "你是一个专业的BI数据分析助手。你的主要任务是：\n\n"
+            "1. 理解用户的自然语言查询需求\n"
+            "2. 分析查询意图，判断是否需要执行SQL查询\n"
+            "3. 如果需要SQL查询，生成准确的MySQL 8.0查询语句\n"
+            "4. 推荐合适的数据可视化图表类型\n"
+            "5. 提供清晰、有洞察力的数据分析结果\n\n"
+            f"数据库结构信息：\n{ddl_sql}\n\n"
+            "工作流程：\n"
+            "1. 首先分析用户查询，如果需要数据查询，在回复中包含 <analysis>需要SQL</analysis>\n"
+            "2. 生成SQL语句并使用sql_executor工具执行\n"
+            "3. 使用chart_recommender工具推荐合适的图表类型\n"
+            "4. 分析查询结果并提供有价值的洞察\n\n"
+            "注意事项：\n"
+            "- 生成的SQL必须符合MySQL 8.0语法\n"
+            "- 只查询确实存在的表和字段\n"
+            "- 考虑数据的业务含义，提供有价值的分析\n"
+            "- 推荐最适合数据展示的图表类型\n"
+        )
+        return base_instruction
     
     def process_query(self, user_query: str, session_id: Optional[str] = None) -> Tuple[str, str, str, int, str]:
         """

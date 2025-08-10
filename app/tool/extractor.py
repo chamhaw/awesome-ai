@@ -30,8 +30,15 @@ def extract_sql_queries(markdown_text):
     return queries
 
 def execute_mysql_and_save_to_csv(sql, conn, output_csv_path):
-    # 创建数据库连接
+    # 仅允许只读查询
+    sql_normalized = sql.strip().lower()
+    if not sql_normalized.startswith('select'):
+        raise ValueError("Only SELECT statements are allowed")
+
     cursor = conn.cursor()
+    # 设置会话级安全与性能约束
+    cursor.execute("SET SESSION max_execution_time = 30000")  # 30s 超时
+    cursor.execute("SET SESSION tx_read_only = 1")            # 只读
 
     # 执行 SQL 语句并获取结果
     cursor.execute(sql)

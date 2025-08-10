@@ -1,0 +1,1 @@
+-- DDL schema placeholder. If you want to override, put your MySQL DDLs here.
